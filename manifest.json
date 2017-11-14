@@ -12,7 +12,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "https://bittrex.com/*"
+    "https://bittrex.com/*",
+    "http://www.xe.com/*"
   ],
   "background": {
     "scripts": ["background.js"],
