@@ -53,7 +53,7 @@ Number.prototype.format = function(n, x) {
 function getPriceFromNode(marketType, col){
   let nodePrice = parseFloat(col.innerText); 
   let isUsdtMarket = marketType === 'usdt';
-  let currencySymbol = isUsdtMarket ? 'Ƀ' : '$';
+  let currencySymbol = isUsdtMarket ? 'Ƀ' : '&pound;';
   let formatDp = isUsdtMarket ? 8 : 2;
   let curPrice = Enhancer.getCurrentPrice(marketType);
   let price = isUsdtMarket ? nodePrice/curPrice : curPrice*nodePrice;
@@ -135,8 +135,22 @@ Enhancer.prices = {
 };
 Enhancer.interval = null;
 Enhancer.initBtcPrice = function initBtcPrice(){
-  const node = document.querySelectorAll(CONSTANTS.btcPriceDomExpr)[0];
-  const btcUsdPrice = parseFloat(node.innerText.split('=')[1].replace('$', ''));
+//usd  const node = document.querySelectorAll(CONSTANTS.btcPriceDomExpr)[0];
+//usd  const btcUsdPrice = parseFloat(node.innerText.split('=')[1].replace('$', ''));
+  
+//GBP
+var xhr = new XMLHttpRequest();
+xhr.responseType = 'document';
+xhr.onreadystatechange = function() {
+  if (xhr.readyState == 4) {
+    // innerText does not let the attacker inject HTML elements.
+    const node = xhr.responseText.querySelectorAll('[class="uccResultAmount"]')[0];
+    const btcUsdPrice = parseFloat(node.innerText);
+  }
+}; //
+xhr.open("GET", chrome.extension.getURL('http://www.xe.com/currencyconverter/convert/?Amount=1&From=XBT&To=GBP'), true);
+xhr.send();
+  
   return btcUsdPrice;
 }
 Enhancer.initEthPrice = function initEthPrice(){
@@ -211,7 +225,7 @@ Enhancer.enhanceMarketsTable = function enhanceMarketsTable(table){
       if(i===0){
         let columns = row.getElementsByTagName('th');
         let mktType = rows[1].getElementsByTagName('td')[0].innerText.split('-')[0];
-        updateHeader("est-price-"+mktType, row, 4, "Est. USD");
+        updateHeader("est-price-"+mktType, row, 4, "Est. GBP");
         continue;
       }
       // Volume -> USD
@@ -228,7 +242,7 @@ Enhancer.enhanceBalanceTable = function balanceTable(table){
     for(let i=0; i<rows.length; i++){
       let row = rows[i];
       if(i===0) {
-        updateHeader(CONSTANTS.classes.estUsdPrice, row, 3, 'Est. USD');
+        updateHeader(CONSTANTS.classes.estUsdPrice, row, 3, 'Est. GBP');
         updateHeader(CONSTANTS.classes.estBtcPrice, row, 4, 'Est. BTC');
         updateHeader(CONSTANTS.classes.estUsdValue, row, 10, 'Est. USD Value');
         continue;
@@ -246,7 +260,7 @@ Enhancer.enhanceBalanceTable = function balanceTable(table){
       const estUsdPrice = estBtcPrice * Enhancer.prices.btcUsd;
       let tkn = columns[1].innerText.replace(/\s+/g, '').toLowerCase();
       if(tkn !== 'bitcoin'){
-        updateColumn(CONSTANTS.classes.estUsdPrice, row, 3, 'fiat', '$' + estUsdPrice.format(2));
+        updateColumn(CONSTANTS.classes.estUsdPrice, row, 3, 'fiat', '&pound;' + estUsdPrice.format(2));
         updateColumn(CONSTANTS.classes.estBtcPrice, row, 4, 'btc', 'Ƀ' + estBtcPrice.format(8));
       } else {
         updateColumn(CONSTANTS.classes.estUsdPrice, row, 3, 'fiat', "-");
@@ -254,7 +268,7 @@ Enhancer.enhanceBalanceTable = function balanceTable(table){
       }
 
       const estUsdValue = parseFloat(columns[priceIdx].innerText) * Enhancer.prices.btcUsd;
-      updateColumn(CONSTANTS.classes.estUsdValue, row, 10, 'fiat', '$'+estUsdValue.format(2));
+      updateColumn(CONSTANTS.classes.estUsdValue, row, 10, 'fiat', '&pound;'+estUsdValue.format(2));
     }
   }
 }
@@ -271,7 +285,7 @@ Enhancer.enhanceOrderTable = function enhanceOrderTable(type, table){
     for(let i=0; i<rows.length; i++){
       let row = rows[i];
       if(i===0) {
-        updateHeader('est-price-' + type, row, priceColIdx, title + ' (Est. ' + (isUsdtMarket?'BTC':'USD') + ')');
+        updateHeader('est-price-' + type, row, priceColIdx, title + ' (Est. ' + (isUsdtMarket?'BTC':'GBP') + ')');
         continue;
       }
       let alreadyInserted = getChildNodeWithClass(row, CONSTANTS.classes.estPrice);
@@ -290,8 +304,8 @@ Enhancer.enhanceMarketHistoryTable = function enhanceMarketHistoryTable(table){
       let row = rows[i];
       let isUsdtMarket = Enhancer.getMarketType() === 'usdt';
       if(i===0) {
-        updateHeader(CONSTANTS.classes.mktHistoryBidAskUsdVal, row, 2, 'BID/ASK (Est. ' + (isUsdtMarket?'BTC':'USD') + ')');
-        updateHeader(CONSTANTS.classes.mktHistoryTotalUsdVal, row, 5, 'TOTAL COST (Est. ' + (isUsdtMarket?'BTC':'USD') + ')');
+        updateHeader(CONSTANTS.classes.mktHistoryBidAskUsdVal, row, 2, 'BID/ASK (Est. ' + (isUsdtMarket?'BTC':'GBP') + ')');
+        updateHeader(CONSTANTS.classes.mktHistoryTotalUsdVal, row, 5, 'TOTAL COST (Est. ' + (isUsdtMarket?'BTC':'GBP') + ')');
         continue;
       }
       let alreadyInserted = getChildNodeWithClass(row, CONSTANTS.classes.mktHistoryUsdPrice);
