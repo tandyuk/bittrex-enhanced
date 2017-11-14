@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Bittrex Enhanced",
-  "description": "Enhance your Bittrex experience by including USD values alongside BTC & ETH prices, and using the TradingView chart widget instead.",
+  "name": "Bittrex Enhanced GBP",
+  "description": "Enhance your Bittrex experience by including GBP values alongside BTC & ETH prices, and using the TradingView chart widget instead.",
   "version": "1.8.0",
 
   "browser_action": {
@@ -37,5 +37,5 @@
       "css": ["enhanced-styles.css"]
     }
   ],
-  "content_security_policy": "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://s3.tradingview.com;"
+  "content_security_policy": "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://s3.tradingview.com; connect-src http://www.xe.com;"
 }
